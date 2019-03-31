@@ -1,10 +1,9 @@
 import { combineReducers } from 'redux';
 
-
 function randomState() {
   var initialState = {
-    ROWS: 34,
-    COLS: 34,
+    ROWS: 40,
+    COLS: 40,
     cells: {}
   }
   for (var i = 0; i < initialState.ROWS; i++) {

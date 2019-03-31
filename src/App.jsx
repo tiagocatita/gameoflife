@@ -2,19 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 
-class Cell extends React.Component {
-  getColor() {
-    let colors = ['#FF5400', '#FF8E00', '#FFD200', '#00C0FF', '#00D267', '#81E650', '#8B48FE', '#CA41FC', '#FF46FB'];
-    return colors[Math.floor(Math.random() * 9)];
-  }
+const CELL_SIZE = 12;
 
+class Cell extends React.Component {
   render() {
     return (
-      <div
+      <rect
+        width={CELL_SIZE}
+        height={CELL_SIZE}
+        x={this.props.x * CELL_SIZE}
+        y={this.props.y * CELL_SIZE}
         className="cell"
-        style={{ 'backgroundColor': this.props.cell ? 'slategray' : '' }}
+        style={{ 'fill': this.props.cell ? 'slategray' : 'white' }}
         onClick={() => this.props.click(this.props.coord)}>
-      </div>
+      </rect>
     )
   }
 }
@@ -31,21 +32,19 @@ class App extends React.Component {
 
   createGrid() {
 
-    var grid = [];
-    for (var i = 0; i < this.props.ROWS; i++) {
-      var cells = [];
-      for (var j = 0; j < this.props.COLS; j++) {
-        var coord = i + "," + j;
-        cells.push(<Cell coord={coord} cell={this.props.cells[coord]} click={this.toggle} key={j} />);
+    var svg = [];
+    for (let x = 0; x < this.props.ROWS; x++) {
+      for (let y = 0; y < this.props.COLS; y++) {
+        const coord = x + "," + y;
+        svg.push(<Cell cell={this.props.cells[coord]} x={x} y={y} click={this.toggle} coord={coord} key={coord} />);
       }
-      grid.push(<div className="row" key={i}>{cells}</div>);
     }
-    return grid;
+    return svg;
   }
 
-  toggle(cell) {
+  toggle(coord) {
     var obj = Object.assign({}, this.props.cells);
-    obj[cell] = !obj[cell];
+    obj[coord] = !obj[coord];
 
     this.props.dispatch({
       type: 'UPDATE_CELLS',
@@ -56,11 +55,11 @@ class App extends React.Component {
   reset() {
     this.pause();
 
-    this.props.dispatch({type: 'RESET'});
+    this.props.dispatch({ type: 'RESET' });
   }
 
   start() {
-    if (!this.timer) this.timer = setInterval(this.life, 100);
+    if (!this.timer) this.timer = setInterval(this.life, 10);
   }
 
   pause() {
@@ -105,7 +104,9 @@ class App extends React.Component {
     return (
       <div>
         <div className="grid">
-          {this.createGrid()}
+          <svg width={this.props.ROWS * CELL_SIZE} height={this.props.COLS * CELL_SIZE}>
+            {this.createGrid()}
+          </svg>
         </div>
         <div className="actions">
           <button className="reset" onClick={this.reset}>Reset</button>
