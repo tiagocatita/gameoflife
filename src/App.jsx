@@ -101,10 +101,14 @@ class App extends React.Component {
   }
 
   render() {
+
+    const containerStyle = {
+      width: this.props.ROWS * CELL_SIZE
+    }
     return (
-      <div>
+      <div className="container" style={containerStyle}>
         <div className="grid">
-          <svg width={this.props.ROWS * CELL_SIZE} height={this.props.COLS * CELL_SIZE}>
+          <svg width={containerStyle.width} height={this.props.COLS * CELL_SIZE}>
             {this.createGrid()}
           </svg>
         </div>
